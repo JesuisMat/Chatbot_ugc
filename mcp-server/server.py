@@ -84,15 +84,22 @@ def handle_call_tool(tool_name, arguments):
         
         elif tool_name == "scrape_multiple_ugc_cinemas":
             cinema_ids = arguments.get("cinema_ids", [])
-            
+
             print(f"[MCP Python] Scraping {len(cinema_ids)} cinémas...", file=sys.stderr)
-            
+
             all_results = []
+            total_films = 0
+            total_filtered = 0
+
             for cinema_id in cinema_ids:
                 result = scraper.scrape_cinema(int(cinema_id))
                 if result["success"]:
                     all_results.append(format_for_llm(result))
-            
+                    total_films += result.get("film_count", 0)
+                    total_filtered += result.get("films_filtered", 0)
+                    print(f"[MCP Python] Cinéma {cinema_id}: {result['film_count']} films avec séances ({result.get('films_filtered', 0)} filtrés)", file=sys.stderr)
+
+            print(f"[MCP Python] Total: {total_films} films avec séances, {total_filtered} films sans séances filtrés", file=sys.stderr)
             combined = "\n\n---\n\n".join(all_results)
             
             return {

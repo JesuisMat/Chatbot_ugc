@@ -7,18 +7,21 @@ const __dirname = path.dirname(__filename);
 
 class MCPClient {
   constructor() {
-    this.mcpServerPath = path.join(__dirname, '../../mcp-server/server.js');
+    // ⭐ Pointe vers le script Python
+    this.mcpServerPath = path.join(__dirname, '../../mcp-server/server.py');
+    this.pythonPath = 'python3'; // ou 'python' selon ton système
     this.requestId = 0;
   }
   
   /**
-   * Exécute un tool via le MCP Server
+   * Exécute un tool via le MCP Server Python
    */
   async callTool(toolName, toolArgs) {
     return new Promise((resolve, reject) => {
-      console.log(`🔧 [MCP Client] Calling tool: ${toolName}`, toolArgs);
+      console.log(`🔧 [MCP Client] Calling Python tool: ${toolName}`, toolArgs);
       
-      const mcpProcess = spawn('node', [this.mcpServerPath]);
+      // ⭐ Spawn du process Python
+      const mcpProcess = spawn(this.pythonPath, [this.mcpServerPath]);
       
       let stdout = '';
       let stderr = '';
@@ -29,9 +32,11 @@ class MCPClient {
       
       mcpProcess.stderr.on('data', (data) => {
         stderr += data.toString();
+        // Affiche les logs Python en temps réel
+        console.log('[Python stderr]', data.toString().trim());
       });
       
-      // Envoie la requête MCP via stdin
+      // Envoie la requête JSON-RPC via stdin
       this.requestId++;
       const mcpRequest = {
         jsonrpc: '2.0',
@@ -48,14 +53,13 @@ class MCPClient {
       
       mcpProcess.on('close', (code) => {
         if (code !== 0) {
-          console.error('❌ MCP Server stderr:', stderr);
-          return reject(new Error(`MCP process exited with code ${code}`));
+          console.error('❌ Python MCP stderr:', stderr);
+          return reject(new Error(`Python MCP process exited with code ${code}`));
         }
         
         try {
           // Parse la réponse JSON-RPC
           const lines = stdout.trim().split('\n').filter(line => {
-            // Ignore les logs du serveur (ceux sans structure JSON-RPC)
             try {
               const parsed = JSON.parse(line);
               return parsed.jsonrpc === '2.0';
@@ -65,32 +69,32 @@ class MCPClient {
           });
           
           if (lines.length === 0) {
-            return reject(new Error('No valid JSON-RPC response from MCP server'));
+            return reject(new Error('No valid JSON-RPC response from Python MCP'));
           }
           
           const response = JSON.parse(lines[lines.length - 1]);
           
           if (response.error) {
-            return reject(new Error(response.error.message || 'MCP error'));
+            return reject(new Error(response.error.message || 'Python MCP error'));
           }
           
           if (response.result && response.result.content) {
             resolve(response.result.content[0].text);
           } else {
-            reject(new Error('Invalid MCP response structure'));
+            reject(new Error('Invalid Python MCP response structure'));
           }
         } catch (error) {
-          console.error('❌ Error parsing MCP response:', error);
+          console.error('❌ Error parsing Python MCP response:', error);
           console.error('Raw stdout:', stdout);
           reject(error);
         }
       });
       
-      // Timeout de 60 secondes
+      // Timeout de 90 secondes (scraping peut être long)
       setTimeout(() => {
         mcpProcess.kill();
-        reject(new Error('MCP tool execution timeout'));
-      }, 60000);
+        reject(new Error('Python MCP tool execution timeout'));
+      }, 90000);
     });
   }
   
@@ -120,7 +124,7 @@ class MCPClient {
   }
   
   /**
-   * Scrape plusieurs cinémas en parallèle
+   * Scrape plusieurs cinémas en séquence
    */
   async scrapeMultipleCinemas(cinemaIds) {
     try {

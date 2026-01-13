@@ -56,6 +56,9 @@ class LLMService {
     }
     
     // ÉTAPE 1.3 : Génération de la recommandation personnalisée
+    console.log('📄 Contenu scrapé:', `${scrapingResult.content.length} caractères`);
+    console.log('📄 Aperçu (premiers 500 chars):', scrapingResult.content.substring(0, 500));
+
     const recommendation = await this._generateRecommendation(
       userInput,
       extractedInfo,
@@ -67,10 +70,11 @@ class LLMService {
       success: true,
       extractedInfo,
       cinemas: cinemas.map(c => ({
-        id: c.id,
-        nom: c.Nom,
-        adresse: c.Adresse,
-        ville: c.Ville
+        id: c._id || c.id,
+        nom: c.nom || c.Nom,
+        adresse: c.adresse || c.Adresse,
+        ville: c.ville || c.Ville,
+        code_postal: c.code_postal || c.Code_postal
       })),
       recommendation
     };
@@ -149,15 +153,17 @@ Réponds UNIQUEMENT avec le JSON, sans commentaire ni markdown.`;
    */
   async _scrapeViaMCP(cinemas) {
     try {
-      const cinemaIds = cinemas.map(c => c.id);
-      
+      // Les cinémas en base ont un champ _id (string)
+      const cinemaIds = cinemas.map(c => c._id || c.id);
+
       console.log(`🔍 Scraping ${cinemaIds.length} cinéma(s) via MCP...`);
-      
+      console.log('Cinema IDs:', cinemaIds);
+
       // Utilise l'outil multiple pour optimiser
       const result = await mcpClient.scrapeMultipleCinemas(cinemaIds);
-      
+
       return result;
-      
+
     } catch (error) {
       console.error('❌ Erreur scraping MCP:', error);
       return {
@@ -171,40 +177,39 @@ Réponds UNIQUEMENT avec le JSON, sans commentaire ni markdown.`;
    * ÉTAPE 1.3 : Génération de la recommandation finale
    */
   async _generateRecommendation(userInput, preferences, cinemas, scrapedContent) {
-    const systemPrompt = `Tu es un conseiller cinéma expert et passionné.
+    console.log(`🧠 Génération recommandation avec LLM`);
+    console.log(`   - Contenu scrapé: ${scrapedContent.length} caractères`);
+    console.log(`   - Cinémas: ${cinemas.length}`);
+    console.log(`   - Préférences:`, preferences);
 
-PRÉFÉRENCES DE L'UTILISATEUR :
-${JSON.stringify(preferences, null, 2)}
+    const systemPrompt = `Tu es un assistant de recommandation de films UGC.
 
-CINÉMAS DISPONIBLES :
-${cinemas.map(c => `- ${c.Nom} (${c.Ville}) - ${c.Adresse}`).join('\n')}
+PRÉFÉRENCES UTILISATEUR:
+- Genre souhaité: ${preferences.genre || 'non spécifié'}
+- Durée max: ${preferences.duree_max ? preferences.duree_max + ' min' : 'non spécifié'}
+- Acteurs: ${preferences.acteurs?.join(', ') || 'non spécifié'}
+- Réalisateur: ${preferences.realisateur || 'non spécifié'}
 
-FILMS ACTUELLEMENT À L'AFFICHE :
+CINÉMAS PROCHES:
+${cinemas.map(c => `- ${c.nom || c.Nom} (${c.ville || c.Ville})`).join('\n')}
+
+FILMS À L'AFFICHE:
 ${scrapedContent}
 
-Ta mission :
-1. Analyser les films disponibles dans les cinémas
-2. Recommander 2-3 films qui correspondent le mieux aux préférences de l'utilisateur
-3. Expliquer pourquoi chaque film correspond (genre, acteurs, réalisateur, durée...)
-4. Indiquer dans quel(s) cinéma(s) voir chaque film
-5. Mentionner les horaires si disponibles dans les données
+INSTRUCTIONS:
+1. LIS ATTENTIVEMENT la liste des films ci-dessus
+2. SÉLECTIONNE 2-3 films qui CORRESPONDENT aux préférences (genre, durée, etc.)
+3. Pour chaque film recommandé, INDIQUE:
+   - Le titre du film
+   - Pourquoi il correspond (genre, durée, acteurs)
+   - Le cinéma où le voir
+   - Les horaires disponibles
 
-Format de réponse :
-- Commence par une phrase d'accroche chaleureuse et personnalisée
-- Pour chaque film recommandé :
-  * Titre en gras
-  * Pourquoi ce film correspond aux préférences
-  * Où le voir (cinéma + adresse)
-  * Horaires si disponibles
-- Termine par une question ouverte pour affiner si besoin
+Réponds de façon concise et directe.`;
 
-Style :
-- Sois enthousiaste mais naturel
-- Utilise des emojis avec parcimonie (🎬 🎥 ⭐)
-- Sois concis mais engageant
-- Si aucun film ne correspond parfaitement, propose les meilleures alternatives en expliquant pourquoi
-
-IMPORTANT : Si les données scrapées sont incomplètes ou illisibles, dis-le honnêtement et propose de consulter directement le site UGC.`;
+    // Log le prompt pour debug
+    console.log('📝 Taille du prompt système:', systemPrompt.length, 'caractères');
+    console.log('📝 Début du prompt:', systemPrompt.substring(0, 300));
 
     try {
       const response = await this._callOllama([
@@ -214,6 +219,8 @@ IMPORTANT : Si les données scrapées sont incomplètes ou illisibles, dis-le ho
         temperature: 0.7,
         num_ctx: 16384
       });
+
+      console.log('✅ Réponse LLM reçue:', response.substring(0, 200));
       
       return response;
       
