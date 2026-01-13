@@ -182,48 +182,77 @@ Réponds UNIQUEMENT avec le JSON, sans commentaire ni markdown.`;
     console.log(`   - Cinémas: ${cinemas.length}`);
     console.log(`   - Préférences:`, preferences);
 
+    // Parse le JSON scrapé
+    let filmsData;
+    try {
+      filmsData = JSON.parse(scrapedContent);
+    } catch (error) {
+      console.error('❌ Erreur parsing JSON scrapé:', error);
+      return "Désolé, une erreur s'est produite lors du traitement des données cinéma.";
+    }
+
     const systemPrompt = `Tu es un assistant de recommandation de films UGC.
 
 PRÉFÉRENCES UTILISATEUR:
-- Genre souhaité: ${preferences.genre || 'non spécifié'}
-- Durée max: ${preferences.duree_max ? preferences.duree_max + ' min' : 'non spécifié'}
-- Acteurs: ${preferences.acteurs?.join(', ') || 'non spécifié'}
-- Réalisateur: ${preferences.realisateur || 'non spécifié'}
+${JSON.stringify({
+  genre: preferences.genre || null,
+  duree_max_minutes: preferences.duree_max || null,
+  acteurs: preferences.acteurs || [],
+  realisateur: preferences.realisateur || null,
+  mots_cles: preferences.mots_cles || []
+}, null, 2)}
 
-CINÉMAS PROCHES:
-${cinemas.map(c => `- ${c.nom || c.Nom} (${c.ville || c.Ville})`).join('\n')}
+DONNÉES CINÉMAS ET FILMS (JSON structuré):
+${JSON.stringify(filmsData, null, 2)}
 
-FILMS À L'AFFICHE:
-${scrapedContent}
+INSTRUCTIONS DE MATCHING:
+1. ANALYSE les préférences utilisateur et les films disponibles
+2. FILTRE les films selon ces critères (dans l'ordre de priorité):
+   a) Genre: si spécifié, le film.genre doit contenir le genre demandé
+   b) Durée: si duree_max spécifiée, film.duration_minutes <= duree_max
+   c) Acteurs: si spécifiés, au moins un acteur doit être dans film.actors
+   d) Réalisateur: si spécifié, film.director doit correspondre
+   e) Note: privilégie les films avec rating >= 3.5
 
-INSTRUCTIONS:
-1. LIS ATTENTIVEMENT la liste des films ci-dessus
-2. SÉLECTIONNE 2-3 films qui CORRESPONDENT aux préférences (genre, durée, etc.)
-3. Pour chaque film recommandé, INDIQUE:
-   - Le titre du film
-   - Pourquoi il correspond (genre, durée, acteurs)
-   - Le cinéma où le voir
-   - Les horaires disponibles
+3. SÉLECTIONNE les 2-3 MEILLEURS films qui correspondent
 
-Réponds de façon concise et directe.`;
+4. Pour chaque film recommandé, FORMATE ainsi:
+   📽️ **[Titre du film]** ([durée]) - Note: [rating]/5
+   🎭 Genre: [genre]
+   👤 Réalisateur: [director]
+   ⭐ Pourquoi: [explication courte du match avec les préférences]
+
+   📍 Où: [cinema_name]
+   🕐 Séances: [liste des 3-4 prochaines séances avec dates]
+
+5. Si AUCUN film ne correspond parfaitement:
+   - Propose les films les plus proches des critères
+   - Explique pourquoi ils ne correspondent pas exactement
+   - Suggère de modifier les préférences
+
+RÈGLES IMPORTANTES:
+- Sois précis sur les horaires (date + heure de début)
+- Ne recommande QUE des films avec des séances disponibles
+- Reste concis et direct
+- Ne propose jamais de film sans séance programmée`;
 
     // Log le prompt pour debug
     console.log('📝 Taille du prompt système:', systemPrompt.length, 'caractères');
-    console.log('📝 Début du prompt:', systemPrompt.substring(0, 300));
+    console.log('📝 Nombre de cinémas:', filmsData.cinemas?.length || (filmsData.cinema_id ? 1 : 0));
 
     try {
       const response = await this._callOllama([
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userInput }
       ], {
-        temperature: 0.7,
+        temperature: 0.5,  // Réduit pour plus de précision
         num_ctx: 16384
       });
 
       console.log('✅ Réponse LLM reçue:', response.substring(0, 200));
-      
+
       return response;
-      
+
     } catch (error) {
       console.error('❌ Erreur génération recommandation:', error);
       return "Désolé, une erreur s'est produite lors de la génération de ma recommandation. Pourriez-vous reformuler votre demande ?";

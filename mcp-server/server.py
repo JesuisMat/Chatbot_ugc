@@ -87,26 +87,34 @@ def handle_call_tool(tool_name, arguments):
 
             print(f"[MCP Python] Scraping {len(cinema_ids)} cinémas...", file=sys.stderr)
 
-            all_results = []
+            all_cinemas = []
             total_films = 0
             total_filtered = 0
 
             for cinema_id in cinema_ids:
                 result = scraper.scrape_cinema(int(cinema_id))
                 if result["success"]:
-                    all_results.append(format_for_llm(result))
+                    # Parse le JSON de chaque cinéma
+                    cinema_json = json.loads(format_for_llm(result))
+                    all_cinemas.append(cinema_json)
                     total_films += result.get("film_count", 0)
                     total_filtered += result.get("films_filtered", 0)
                     print(f"[MCP Python] Cinéma {cinema_id}: {result['film_count']} films avec séances ({result.get('films_filtered', 0)} filtrés)", file=sys.stderr)
 
             print(f"[MCP Python] Total: {total_films} films avec séances, {total_filtered} films sans séances filtrés", file=sys.stderr)
-            combined = "\n\n---\n\n".join(all_results)
-            
+
+            # Combine tous les cinémas dans un seul JSON
+            combined_data = {
+                "cinemas": all_cinemas,
+                "total_films": total_films,
+                "total_filtered": total_filtered
+            }
+
             return {
                 "content": [
                     {
                         "type": "text",
-                        "text": combined or "❌ Aucun cinéma n'a pu être scrapé"
+                        "text": json.dumps(combined_data, ensure_ascii=False, separators=(',', ':')) if all_cinemas else "❌ Aucun cinéma n'a pu être scrapé"
                     }
                 ]
             }
@@ -128,44 +136,74 @@ def handle_call_tool(tool_name, arguments):
 
 def format_for_llm(result: dict) -> str:
     """
-    Formate le JSON en texte lisible pour le LLM
+    Formate les données scrapées en JSON structuré optimisé pour le LLM
+
+    Retourne un JSON compact avec:
+    - Infos cinéma
+    - Liste des films avec métadonnées
+    - Séances groupées par date (limité à 3 prochaines dates)
     """
     cinema = result["cinema"]
     films = result["films"]
-    
-    lines = [f"# {cinema['name']}"]
-    lines.append(f"\n**Films à l'affiche** ({len(films)} films):\n")
-    
-    for i, film in enumerate(films, 1):
-        lines.append(f"## {i}. {film['title']}")
-        
-        if film.get("genre"):
-            lines.append(f"- **Genre**: {film['genre']}")
-        
-        if film.get("duration"):
-            lines.append(f"- **Durée**: {film['duration']}")
-        
-        if film.get("director"):
-            lines.append(f"- **Réalisateur**: {film['director']}")
-        
-        if film.get("actors"):
-            lines.append(f"- **Acteurs**: {film['actors']}")
-        
-        if film.get("rating"):
-            lines.append(f"- **Note**: {film['rating']}/5")
-        
-        # Horaires (uniquement les 3 prochaines dates)
+
+    # Conversion de la durée en minutes (ex: "2h43" -> 163)
+    def parse_duration(duration_str):
+        if not duration_str:
+            return None
+        # Format: "2h43" ou "1h30"
+        import re
+        match = re.match(r"(\d+)h(\d+)?", duration_str)
+        if match:
+            hours = int(match.group(1))
+            minutes = int(match.group(2)) if match.group(2) else 0
+            return hours * 60 + minutes
+        return None
+
+    # Séparation des acteurs en liste
+    def parse_actors(actors_str):
+        if not actors_str:
+            return []
+        return [a.strip() for a in actors_str.split(',')]
+
+    # Construction du JSON structuré
+    formatted_films = []
+
+    for film in films:
+        film_data = {
+            "film_id": film.get("film_id"),
+            "title": film.get("title"),
+            "genre": film.get("genre"),
+            "duration_minutes": parse_duration(film.get("duration")),
+            "duration_display": film.get("duration"),
+            "director": film.get("director"),
+            "actors": parse_actors(film.get("actors")),
+            "rating": film.get("rating"),
+            "release_date": film.get("release_date"),
+            "seances": []
+        }
+
+        # Horaires (limité aux 3 prochaines dates)
         if film.get("showings"):
             dates = sorted(film["showings"].keys())[:3]
             for date in dates:
-                seances = film["showings"][date]
-                horaires = [s["start"] for s in seances[:5]]  # Max 5 horaires
-                if horaires:
-                    lines.append(f"- **{date}**: {', '.join(horaires)}")
-        
-        lines.append("")  # Ligne vide
-    
-    return "\n".join(lines)
+                seances_list = film["showings"][date][:5]  # Max 5 horaires par date
+                if seances_list:
+                    film_data["seances"].append({
+                        "date": date,
+                        "horaires": seances_list
+                    })
+
+        formatted_films.append(film_data)
+
+    # Structure finale
+    cinema_data = {
+        "cinema_id": cinema.get("id"),
+        "cinema_name": cinema.get("name"),
+        "films": formatted_films
+    }
+
+    # Retourne le JSON en string compact
+    return json.dumps(cinema_data, ensure_ascii=False, separators=(',', ':'))
 
 def handle_request(request):
     """

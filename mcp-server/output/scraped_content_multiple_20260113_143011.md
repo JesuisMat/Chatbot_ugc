@@ -1,0 +1,589 @@
+<!-- Scraping multiple cinemas -->
+<!-- Genere le: 2026-01-13 14:30:11 -->
+<!-- Cinemas: 57, 42 -->
+<!-- Total films: 67 -->
+<!-- Films filtres: 36 -->
+<!-- Taille: 16313 caracteres -->
+
+---
+
+# UGC Cinéma 57
+
+**Films a l'affiche** (36 films):
+
+## 1. PARASAKTHI (TAMOUL)
+- **Genre**: Action, Drame
+- **Duree**: 2h43
+- **Realisateur**: Sudha Kongara
+- **Acteurs**: Sivakarthikeyan, Sree Leela, Ravi Mohan
+- **Note**: 3.8/5
+- **2026-01-13**: 17:10, 20:45
+
+## 2. CHASSE GARDEE 2
+- **Genre**: Comédie
+- **Duree**: 1h40
+- **Realisateur**: Antonin Fourlon, Frédéric Forestier
+- **Acteurs**: Didier Bourdon, Camille Lou, Hakim Jemili
+- **Note**: 3.6/5
+- **2026-01-13**: 15:40, 17:50, 20:00, 22:10
+- **2026-01-14**: 17:50, 22:05
+- **2026-01-15**: 17:50
+
+## 3. DOSSIER 137
+- **Genre**: Policier
+- **Duree**: 1h56
+- **Realisateur**: Dominik Moll
+- **Acteurs**: Léa Drucker, Guslagie Malanda, Mathilde Roehrich
+- **Note**: 4.2/5
+- **2026-01-13**: 18:00
+- **2026-01-18**: 18:00, 20:30
+
+## 4. ZOOTOPIE 2
+- **Genre**: Famille, Comédie, Aventure, Animation
+- **Duree**: 1h48
+- **Realisateur**: Byron Howard, Jared Bush
+- **Note**: 4.3/5
+- **2026-01-13**: 15:50, 17:00, 18:15, 19:20, 20:40
+- **2026-01-14**: 10:40, 11:15, 14:00, 15:20, 16:30
+- **2026-01-15**: 14:00, 15:20, 16:30, 17:45, 22:00
+
+## 5. FIVE NIGHTS AT FREDDY'S 2
+- **Genre**: Epouvante-horreur
+- **Duree**: 1h44
+- **Realisateur**: Emma Tammi
+- **Acteurs**: Josh Hutcherson, Elizabeth Lail, Matthew Lillard
+- **Note**: 3.0/5
+- **2026-01-13**: 22:05
+
+## 6. INSAISISSABLES 3
+- **Genre**: Comédie, Aventure, Thriller
+- **Duree**: 1h53
+- **Realisateur**: Ruben Fleischer
+- **Acteurs**: Jesse Eisenberg, Woody Harrelson, Dave Franco
+- **Note**: 3.5/5
+- **2026-01-13**: 21:05
+
+## 7. ANACONDA
+- **Genre**: Comédie, Aventure
+- **Duree**: 1h39
+- **Realisateur**: Tom Gormican
+- **Acteurs**: Paul Rudd, Jack Black, Steve Zahn
+- **Note**: 3.1/5
+- **2026-01-13**: 15:40, 17:50, 20:00, 22:15
+- **2026-01-14**: 22:15
+- **2026-01-15**: 13:30, 15:40, 22:15
+
+## 8. AVATAR : DE FEU ET DE CENDRES
+- **Genre**: Action, Science Fiction, Aventure, Fantastique
+- **Duree**: 3h17
+- **Realisateur**: James Cameron
+- **Acteurs**: Sam Worthington, Zoe Saldana, Sigourney Weaver
+- **Note**: 4.1/5
+- **2026-01-13**: 15:15, 16:15, 17:15, 18:15, 19:15
+- **2026-01-14**: 10:35, 11:00, 14:15, 15:15, 16:15
+- **2026-01-15**: 14:15, 15:15, 16:15, 18:15, 19:15
+
+## 9. L'AME IDEALE
+- **Genre**: Comédie, Romance, Fantastique
+- **Duree**: 1h39
+- **Realisateur**: Alice Vial
+- **Acteurs**: Jonathan Cohen, Magalie Lépine Blondeau, Florence Janas
+- **Note**: 4.2/5
+- **2026-01-13**: 15:45, 17:55, 20:05, 22:15
+- **2026-01-14**: 17:55, 20:00
+- **2026-01-15**: 14:00, 17:55, 20:00
+
+## 10. LA FEMME DE MÉNAGE
+- **Genre**: Thriller
+- **Duree**: 2h12
+- **Realisateur**: Paul Feig
+- **Acteurs**: Sydney Sweeney, Amanda Seyfried, Brandon Sklenar
+- **Note**: 3.8/5
+- **2026-01-13**: 15:30, 16:30, 18:15, 19:30, 21:00
+- **2026-01-14**: 10:45, 13:45, 15:35, 16:30, 18:15
+- **2026-01-15**: 13:45, 15:35, 16:30, 18:15, 19:15
+
+## 11. LE PAYS D ARTO
+- **Genre**: Drame
+- **Duree**: 1h45
+- **Realisateur**: Tamara Stepanyan
+- **Acteurs**: Camille Cottin, Zar Amir Ebrahimi, Shant Hovhannisyan
+- **Note**: 3.2/5
+- **2026-01-13**: 15:45, 20:45
+
+## 12. DRAGONS
+- **Genre**: Action, Aventure, Fantastique
+- **Duree**: 2h05
+- **Realisateur**: Dean DeBlois
+- **Acteurs**: Mason Thames, Gerard Butler, Nico Parker
+- **Note**: 4.3/5
+- **2026-01-14**: 13:20, 15:55
+
+## 13. L'AFFAIRE BOJARSKI
+- **Genre**: Drame
+- **Duree**: 2h08
+- **Realisateur**: Jean-Paul Salomé
+- **Acteurs**: Reda Kateb, Sara Giraudeau, Bastien Bouillon
+- **Note**: 4.4/5
+- **2026-01-14**: 10:35, 13:50, 16:30, 19:10, 21:45
+- **2026-01-15**: 13:50, 16:30, 19:05, 21:45
+- **2026-01-16**: 13:50, 16:30, 19:10, 21:45
+
+## 14. SINNERS
+- **Genre**: Action, Epouvante-horreur, Thriller
+- **Duree**: 2h18
+- **Realisateur**: Ryan Coogler
+- **Acteurs**: Michael B. Jordan, Hailee Steinfeld, Miles Caton
+- **Note**: 4.0/5
+- **2026-01-14**: 18:30, 21:15
+
+## 15. MEMOIRES D'UN ESCARGOT
+- **Genre**: Drame, Animation
+- **Duree**: 1h34
+- **Realisateur**: Adam Elliot
+- **Note**: 4.2/5
+- **2026-01-14**: 11:00
+- **2026-01-15**: 17:50
+
+## 16. 28 ANS PLUS TARD : LE TEMPLE DES MORTS
+- **Genre**: Epouvante-horreur
+- **Duree**: 1h49
+- **Realisateur**: Nia DaCosta
+- **Acteurs**: Ralph Fiennes, Alfie Williams, Jack O'Connell
+- **2026-01-14**: 11:00, 14:00, 16:30, 19:30, 20:30
+- **2026-01-15**: 14:00, 16:30, 19:30, 20:30, 22:00
+- **2026-01-16**: 14:00, 16:30, 19:30, 20:30, 22:00
+
+## 17. ALICE AU PAYS DES MERVEILLES : DIVE IN WONDERLAND
+- **Genre**: Fantastique, Animation
+- **Duree**: 1h35
+- **Realisateur**: Toshiya Shinohara
+- **Note**: 3.4/5
+- **2026-01-14**: 10:45, 13:45
+- **2026-01-15**: 13:45
+- **2026-01-16**: 13:45
+
+## 18. BOB L'EPONGE LE FILM : UN POUR TOUS, TOUS PIRATES
+- **Genre**: Famille, Comédie, Aventure, Animation
+- **Duree**: 1h29
+- **Realisateur**: Derek Drymon
+- **Note**: 3.3/5
+- **2026-01-14**: 10:45, 13:50, 15:50
+- **2026-01-17**: 10:45, 13:50, 15:50
+- **2026-01-18**: 10:45, 13:50, 15:50
+
+## 19. HEIDI ET LE LYNX DES MONTAGNES
+- **Genre**: Famille, Aventure, Animation
+- **Duree**: 1h19
+- **Realisateur**: Tobias Schwarz, Aizea Roca Berridi
+- **Note**: 4.1/5
+- **2026-01-14**: 11:00, 13:30
+- **2026-01-15**: 13:30
+- **2026-01-16**: 13:30
+
+## 20. PANIQUE A NOEL
+- **Genre**: Famille, Comédie, Animation
+- **Duree**: 1h20
+- **Realisateur**: Henrik Martin Dahlsbakken
+- **Note**: 3.7/5
+- **2026-01-14**: 10:45, 13:40
+- **2026-01-17**: 10:45, 13:40
+- **2026-01-18**: 13:40
+
+## 21. GREENLAND : MIGRATION
+- **Genre**: Action, Thriller
+- **Duree**: 1h38
+- **Realisateur**: Ric Roman Waugh
+- **Acteurs**: Gerard Butler, Morena Baccarin, William Abadie
+- **2026-01-14**: 10:35, 13:35, 15:45, 17:55, 20:05
+- **2026-01-15**: 13:35, 15:45, 17:55, 20:05, 22:15
+- **2026-01-16**: 13:35, 15:45, 17:55, 20:05, 22:15
+
+## 22. SANS PITIE
+- **Genre**: Thriller, Drame
+- **Duree**: 1h34
+- **Realisateur**: Julien Hosmalin
+- **Acteurs**: Adam Bessa, Tewfik Jallab, Jonathan Turnbull
+- **Note**: 4.0/5
+- **2026-01-14**: 15:50, 20:05, 22:10
+- **2026-01-15**: 13:30, 15:50, 20:05, 22:10
+- **2026-01-16**: 13:30, 15:50, 20:05, 22:10
+
+## 23. A BICYCLETTE !
+- **Genre**: Comédie Dramatique
+- **Duree**: 1h28
+- **Realisateur**: Mathias Mlekuz
+- **Acteurs**: Mathias Mlekuz, Philippe Rebbot, Josef Mlekuz
+- **Note**: 4.1/5
+- **2026-01-15**: 15:55, 19:55
+
+## 24. LA VENUE DE L'AVENIR
+- **Genre**: Comédie Dramatique
+- **Duree**: 2h06
+- **Realisateur**: Cédric Klapisch
+- **Acteurs**: Suzanne Lindon, Abraham Wapler, Vincent Macaigne
+- **Note**: 4.3/5
+- **2026-01-15**: 13:20, 21:50
+
+## 25. ENTRE LE CIEL ET L'ENFER
+- **Genre**: Thriller, Drame
+- **Duree**: 2h23
+- **Realisateur**: Akira Kurosawa
+- **Acteurs**: Toshirô Mifune, Tatsuya Nakadai, Kyôko Kagawa
+- **Note**: 4.5/5
+- **2026-01-15**: 19:30
+
+## 26. L'ÉTRANGER
+- **Genre**: Drame
+- **Duree**: 2h03
+- **Realisateur**: François Ozon
+- **Acteurs**: Benjamin Voisin, Rebecca Marder, Pierre Lottin
+- **Note**: 3.7/5
+- **2026-01-16**: 17:00
+
+## 27. VALEUR SENTIMENTALE
+- **Genre**: Drame
+- **Duree**: 2h15
+- **Realisateur**: Joachim Trier
+- **Acteurs**: Renate Reinsve, Stellan Skarsgård, Inga Ibsdotter Lilleaas
+- **Note**: 3.9/5
+- **2026-01-16**: 14:00, 20:00
+
+## 28. PRIMATE
+- **Genre**: Epouvante-horreur
+- **Duree**: 1h35
+- **Realisateur**: Johannes Roberts
+- **Acteurs**: Johnny Sequoyah, Jessica Alexander, Victoria Wyant
+- **2026-01-16**: 20:05
+
+## 29. AMÉLIE ET LA MÉTAPHYSIQUE DES TUBES
+- **Genre**: Animation
+- **Duree**: 1h18
+- **Realisateur**: Mailys Vallade, Liane-Cho Han
+- **Note**: 4.3/5
+- **2026-01-17**: 11:00, 14:00, 16:00
+
+## 30. SIRAT
+- **Genre**: Drame
+- **Duree**: 1h55
+- **Realisateur**: Oliver Laxe
+- **Acteurs**: Sergi López, Bruno Núñez Arjona, Richard Bellamy
+- **Note**: 3.7/5
+- **2026-01-17**: 18:00, 20:30
+
+## 31. LA LIGNE VERTE
+- **Genre**: Drame, Fantastique, Policier
+- **Duree**: 3h10
+- **Realisateur**: Frank Darabont
+- **Acteurs**: Tom Hanks, Michael Clarke Duncan, David Morse
+- **Note**: 5.0/5
+- **2026-01-17**: 18:00
+
+## 32. LE MAGE DU KREMLIN
+- **Genre**: Thriller
+- **Duree**: 2h25
+- **Realisateur**: Olivier Assayas
+- **Acteurs**: Paul Dano, Jude Law, Alicia Vikander
+- **2026-01-18**: 17:45
+
+## 33. ARCO
+- **Genre**: Science Fiction, Aventure, Animation
+- **Duree**: 1h28
+- **Realisateur**: Ugo Bienvenu
+- **Note**: 4.3/5
+- **2026-01-18**: 11:00, 14:00, 16:00
+
+## 34. LA BELLE AU BOIS DORMANT
+- **Genre**: Musical, Fantastique, Animation
+- **Duree**: 1h18
+- **Realisateur**: Wolfgang Reitherman, Eric Larson, Les Clark
+- **Note**: 4.1/5
+- **2026-01-18**: 11:00
+
+## 35. THE BRUTALIST
+- **Genre**: Drame
+- **Duree**: 3h35
+- **Realisateur**: Brady Corbet
+- **Acteurs**: Adrien Brody, Felicity Jones, Guy Pearce
+- **Note**: 3.9/5
+- **2026-01-19**: 17:05
+
+## 36. F1® LE FILM
+- **Genre**: Action
+- **Duree**: 2h35
+- **Realisateur**: Joseph Kosinski
+- **Acteurs**: Brad Pitt, Damson Idris, Javier Bardem
+- **Note**: 4.3/5
+- **2026-01-19**: 14:00, 21:10
+
+
+---
+
+# UGC Cinéma 42
+
+**Films a l'affiche** (31 films):
+
+## 1. FATHER MOTHER SISTER BROTHER
+- **Genre**: Comédie, Drame
+- **Duree**: 1h51
+- **Realisateur**: Jim Jarmusch
+- **Acteurs**: Tom Waits, Adam Driver, Mayim Bialik
+- **Note**: 3.1/5
+- **2026-01-13**: 18:20, 20:50
+- **2026-01-14**: 13:30, 15:55, 20:35
+- **2026-01-15**: 13:30, 15:55, 20:35
+
+## 2. CHASSE GARDEE 2
+- **Genre**: Comédie
+- **Duree**: 1h40
+- **Realisateur**: Antonin Fourlon, Frédéric Forestier
+- **Acteurs**: Didier Bourdon, Camille Lou, Hakim Jemili
+- **Note**: 3.6/5
+- **2026-01-13**: 18:05
+
+## 3. DOSSIER 137
+- **Genre**: Policier
+- **Duree**: 1h56
+- **Realisateur**: Dominik Moll
+- **Acteurs**: Léa Drucker, Guslagie Malanda, Mathilde Roehrich
+- **Note**: 4.2/5
+- **2026-01-13**: 18:00
+- **2026-01-17**: 18:00, 20:30
+
+## 4. ZOOTOPIE 2
+- **Genre**: Famille, Comédie, Aventure, Animation
+- **Duree**: 1h48
+- **Realisateur**: Byron Howard, Jared Bush
+- **Note**: 4.3/5
+- **2026-01-13**: 15:50, 16:45, 18:10, 19:15, 22:05
+- **2026-01-14**: 14:00, 15:45, 16:45, 18:10, 19:20
+- **2026-01-15**: 14:00, 15:45, 16:45, 18:10, 19:20
+
+## 5. LE CHANT DES FORETS
+- **Genre**: Documentaire
+- **Duree**: 1h36
+- **Realisateur**: Vincent Munier
+- **Acteurs**: Vincent Munier
+- **Note**: 4.2/5
+- **2026-01-13**: 15:50, 20:25
+- **2026-01-14**: 13:30, 18:25
+- **2026-01-15**: 13:30, 18:25
+
+## 6. ANACONDA
+- **Genre**: Comédie, Aventure
+- **Duree**: 1h39
+- **Realisateur**: Tom Gormican
+- **Acteurs**: Paul Rudd, Jack Black, Steve Zahn
+- **Note**: 3.1/5
+- **2026-01-13**: 16:05, 21:05
+- **2026-01-14**: 22:05
+- **2026-01-15**: 22:05
+
+## 7. AVATAR : DE FEU ET DE CENDRES
+- **Genre**: Action, Science Fiction, Aventure, Fantastique
+- **Duree**: 3h17
+- **Realisateur**: James Cameron
+- **Acteurs**: Sam Worthington, Zoe Saldana, Sigourney Weaver
+- **Note**: 4.1/5
+- **2026-01-13**: 15:15, 16:00, 17:15, 19:30, 20:00
+- **2026-01-14**: 14:00, 15:40, 16:00, 19:30, 20:00
+- **2026-01-15**: 14:00, 15:40, 16:00, 20:00, 20:30
+
+## 8. FURCY, NÉ LIBRE
+- **Genre**: Biopic, Judiciaire, Drame, Historique
+- **Duree**: 1h49
+- **Realisateur**: Abd Al Malik
+- **Acteurs**: Makita Samba, Romain Duris, Ana Girardot
+- **Note**: 4.1/5
+- **2026-01-13**: 20:30
+- **2026-01-14**: 13:50, 16:05, 19:45
+- **2026-01-15**: 13:50, 16:05, 19:45
+
+## 9. L'AME IDEALE
+- **Genre**: Comédie, Romance, Fantastique
+- **Duree**: 1h39
+- **Realisateur**: Alice Vial
+- **Acteurs**: Jonathan Cohen, Magalie Lépine Blondeau, Florence Janas
+- **Note**: 4.2/5
+- **2026-01-13**: 15:35, 17:45, 20:00, 22:10
+- **2026-01-14**: 13:45, 18:20
+- **2026-01-15**: 13:45, 18:20
+
+## 10. LA FEMME DE MÉNAGE
+- **Genre**: Thriller
+- **Duree**: 2h12
+- **Realisateur**: Paul Feig
+- **Acteurs**: Sydney Sweeney, Amanda Seyfried, Brandon Sklenar
+- **Note**: 3.8/5
+- **2026-01-13**: 15:30, 16:30, 18:15, 19:20, 21:00
+- **2026-01-14**: 14:00, 15:30, 16:45, 18:15, 19:30
+- **2026-01-15**: 14:00, 15:30, 16:45, 18:15, 19:30
+
+## 11. L'AFFAIRE BOJARSKI
+- **Genre**: Drame
+- **Duree**: 2h08
+- **Realisateur**: Jean-Paul Salomé
+- **Acteurs**: Reda Kateb, Sara Giraudeau, Bastien Bouillon
+- **Note**: 4.4/5
+- **2026-01-14**: 13:45, 16:30, 20:40
+- **2026-01-15**: 13:45, 16:30, 20:40
+- **2026-01-16**: 13:45, 16:30, 20:40
+
+## 12. AMÉLIE ET LA MÉTAPHYSIQUE DES TUBES
+- **Genre**: Animation
+- **Duree**: 1h18
+- **Realisateur**: Mailys Vallade, Liane-Cho Han
+- **Note**: 4.3/5
+- **2026-01-14**: 14:00, 16:00
+
+## 13. SIRAT
+- **Genre**: Drame
+- **Duree**: 1h55
+- **Realisateur**: Oliver Laxe
+- **Acteurs**: Sergi López, Bruno Núñez Arjona, Richard Bellamy
+- **Note**: 3.7/5
+- **2026-01-14**: 18:00, 20:30
+
+## 14. 28 ANS PLUS TARD : LE TEMPLE DES MORTS
+- **Genre**: Epouvante-horreur
+- **Duree**: 1h49
+- **Realisateur**: Nia DaCosta
+- **Acteurs**: Ralph Fiennes, Alfie Williams, Jack O'Connell
+- **2026-01-14**: 14:20, 17:00, 19:30, 22:00
+- **2026-01-15**: 14:20, 17:00, 19:30, 22:00
+- **2026-01-16**: 14:20, 17:00, 19:30, 22:00
+
+## 15. BOB L'EPONGE LE FILM : UN POUR TOUS, TOUS PIRATES
+- **Genre**: Famille, Comédie, Aventure, Animation
+- **Duree**: 1h29
+- **Realisateur**: Derek Drymon
+- **Note**: 3.3/5
+- **2026-01-14**: 13:30
+- **2026-01-15**: 13:30
+- **2026-01-16**: 13:30
+
+## 16. GREENLAND : MIGRATION
+- **Genre**: Action, Thriller
+- **Duree**: 1h38
+- **Realisateur**: Ric Roman Waugh
+- **Acteurs**: Gerard Butler, Morena Baccarin, William Abadie
+- **2026-01-14**: 13:35, 18:15, 20:35
+- **2026-01-15**: 13:35, 18:15, 20:35
+- **2026-01-16**: 13:35, 18:15, 20:35
+
+## 17. THE BRUTALIST
+- **Genre**: Drame
+- **Duree**: 3h35
+- **Realisateur**: Brady Corbet
+- **Acteurs**: Adrien Brody, Felicity Jones, Guy Pearce
+- **Note**: 3.9/5
+- **2026-01-15**: 17:00
+
+## 18. ENTRE LE CIEL ET L'ENFER
+- **Genre**: Thriller, Drame
+- **Duree**: 2h23
+- **Realisateur**: Akira Kurosawa
+- **Acteurs**: Toshirô Mifune, Tatsuya Nakadai, Kyôko Kagawa
+- **Note**: 4.5/5
+- **2026-01-15**: 19:30
+
+## 19. F1® LE FILM
+- **Genre**: Action
+- **Duree**: 2h35
+- **Realisateur**: Joseph Kosinski
+- **Acteurs**: Brad Pitt, Damson Idris, Javier Bardem
+- **Note**: 4.3/5
+- **2026-01-15**: 13:45, 21:15
+
+## 20. A BICYCLETTE !
+- **Genre**: Comédie Dramatique
+- **Duree**: 1h28
+- **Realisateur**: Mathias Mlekuz
+- **Acteurs**: Mathias Mlekuz, Philippe Rebbot, Josef Mlekuz
+- **Note**: 4.1/5
+- **2026-01-16**: 15:55, 19:55
+
+## 21. LA VENUE DE L'AVENIR
+- **Genre**: Comédie Dramatique
+- **Duree**: 2h06
+- **Realisateur**: Cédric Klapisch
+- **Acteurs**: Suzanne Lindon, Abraham Wapler, Vincent Macaigne
+- **Note**: 4.3/5
+- **2026-01-16**: 13:20, 21:50
+
+## 22. MEMOIRES D'UN ESCARGOT
+- **Genre**: Drame, Animation
+- **Duree**: 1h34
+- **Realisateur**: Adam Elliot
+- **Note**: 4.2/5
+- **2026-01-16**: 17:50
+- **2026-01-18**: 11:00
+
+## 23. HEIDI ET LE LYNX DES MONTAGNES
+- **Genre**: Famille, Aventure, Animation
+- **Duree**: 1h19
+- **Realisateur**: Tobias Schwarz, Aizea Roca Berridi
+- **Note**: 4.1/5
+- **2026-01-17**: 10:35
+- **2026-01-18**: 10:35
+
+## 24. ARCO
+- **Genre**: Science Fiction, Aventure, Animation
+- **Duree**: 1h28
+- **Realisateur**: Ugo Bienvenu
+- **Note**: 4.3/5
+- **2026-01-17**: 11:00, 14:00, 16:00
+
+## 25. LA LIGNE VERTE
+- **Genre**: Drame, Fantastique, Policier
+- **Duree**: 3h10
+- **Realisateur**: Frank Darabont
+- **Acteurs**: Tom Hanks, Michael Clarke Duncan, David Morse
+- **Note**: 5.0/5
+- **2026-01-17**: 18:00
+
+## 26. DRAGONS
+- **Genre**: Action, Aventure, Fantastique
+- **Duree**: 2h05
+- **Realisateur**: Dean DeBlois
+- **Acteurs**: Mason Thames, Gerard Butler, Nico Parker
+- **Note**: 4.3/5
+- **2026-01-18**: 13:30, 16:10
+
+## 27. LE MAGE DU KREMLIN
+- **Genre**: Thriller
+- **Duree**: 2h25
+- **Realisateur**: Olivier Assayas
+- **Acteurs**: Paul Dano, Jude Law, Alicia Vikander
+- **2026-01-18**: 17:45
+
+## 28. SINNERS
+- **Genre**: Action, Epouvante-horreur, Thriller
+- **Duree**: 2h18
+- **Realisateur**: Ryan Coogler
+- **Acteurs**: Michael B. Jordan, Hailee Steinfeld, Miles Caton
+- **Note**: 4.0/5
+- **2026-01-18**: 18:45, 21:35
+
+## 29. LA BELLE AU BOIS DORMANT
+- **Genre**: Musical, Fantastique, Animation
+- **Duree**: 1h18
+- **Realisateur**: Wolfgang Reitherman, Eric Larson, Les Clark
+- **Note**: 4.1/5
+- **2026-01-18**: 10:45
+
+## 30. UN SIMPLE ACCIDENT
+- **Genre**: Drame
+- **Duree**: 1h43
+- **Realisateur**: Jafar Panahi
+- **Acteurs**: Vahid Mobasseri, Mariam Afshari, Ebrahim Azizi
+- **Note**: 3.8/5
+- **2026-01-19**: 14:00, 20:15
+
+## 31. UNE BATAILLE APRÈS L'AUTRE
+- **Genre**: Action, Comédie, Drame
+- **Duree**: 2h42
+- **Realisateur**: Paul Thomas Anderson
+- **Acteurs**: Leonardo DiCaprio, Sean Penn, Chase Infiniti
+- **Note**: 4.1/5
+- **2026-01-19**: 16:15
