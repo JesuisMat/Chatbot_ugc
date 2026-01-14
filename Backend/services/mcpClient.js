@@ -90,11 +90,11 @@ class MCPClient {
         }
       });
       
-      // Timeout de 90 secondes (scraping peut être long)
+      // Timeout de 15 minutes (scraping de tous les cinémas peut être très long)
       setTimeout(() => {
         mcpProcess.kill();
         reject(new Error('Python MCP tool execution timeout'));
-      }, 90000);
+      }, 900000); // 15 minutes
     });
   }
   

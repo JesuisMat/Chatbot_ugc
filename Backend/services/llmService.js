@@ -1,6 +1,7 @@
 import axios from 'axios';
-import mcpClient from './mcpClient.js';
 import cinemaService from './cinemaService.js';
+import embeddingService from './embeddingService.js';
+import UgcFilm from '../models/ugcFilm.js';
 
 class LLMService {
   constructor() {
@@ -43,27 +44,12 @@ class LLMService {
     }
     
     console.log(`🎥 ${cinemas.length} cinéma(s) trouvé(s)`);
-    
-    // ÉTAPE 1.2.1 : Scraping via MCP
-    const scrapingResult = await this._scrapeViaMCP(cinemas);
-    
-    if (!scrapingResult.success) {
-      return {
-        success: false,
-        message: "Désolé, je n'ai pas pu récupérer les informations des cinémas. Veuillez réessayer dans quelques instants.",
-        error: scrapingResult.error
-      };
-    }
-    
-    // ÉTAPE 1.3 : Génération de la recommandation personnalisée
-    console.log('📄 Contenu scrapé:', `${scrapingResult.content.length} caractères`);
-    console.log('📄 Aperçu (premiers 500 chars):', scrapingResult.content.substring(0, 500));
 
+    // ÉTAPE 1.3 : Génération de la recommandation personnalisée via RAG
     const recommendation = await this._generateRecommendation(
       userInput,
       extractedInfo,
-      cinemas,
-      scrapingResult.content
+      cinemas
     );
     
     return {
@@ -149,47 +135,156 @@ Réponds UNIQUEMENT avec le JSON, sans commentaire ni markdown.`;
   }
   
   /**
-   * ÉTAPE 1.2.1 : Scraping via MCP
+   * Recherche vectorielle RAG : trouve les films pertinents via similarity search
    */
-  async _scrapeViaMCP(cinemas) {
+  async _searchRelevantFilms(preferences, cinemaIds, topK = 10) {
     try {
-      // Les cinémas en base ont un champ _id (string)
-      const cinemaIds = cinemas.map(c => c._id || c.id);
+      console.log('🔍 Recherche vectorielle RAG...');
+      console.log('   - Cinémas:', cinemaIds);
+      console.log('   - Préférences:', preferences);
 
-      console.log(`🔍 Scraping ${cinemaIds.length} cinéma(s) via MCP...`);
-      console.log('Cinema IDs:', cinemaIds);
+      // 1. Construire la requête texte basée sur les préférences
+      const queryText = this._buildQueryText(preferences);
+      console.log('   - Query text:', queryText);
 
-      // Utilise l'outil multiple pour optimiser
-      const result = await mcpClient.scrapeMultipleCinemas(cinemaIds);
+      // 2. Générer l'embedding de la requête
+      const queryEmbedding = await embeddingService.generateEmbedding(queryText);
 
-      return result;
+      // 3. Recherche vectorielle dans MongoDB
+      // On utilise $lookup si nécessaire, mais ici on fait une recherche simple
+      const pipeline = [
+        // Filtre par cinémas
+        {
+          $match: {
+            cinema_id: { $in: cinemaIds.map(id => parseInt(id)) }
+          }
+        },
+        // Ajoute un champ calculé de similarité cosinus
+        {
+          $addFields: {
+            similarity: {
+              $let: {
+                vars: {
+                  dotProduct: {
+                    $reduce: {
+                      input: { $range: [0, 1024] },
+                      initialValue: 0,
+                      in: {
+                        $add: [
+                          "$$value",
+                          {
+                            $multiply: [
+                              { $arrayElemAt: ["$film_embedding", "$$this"] },
+                              { $arrayElemAt: [queryEmbedding, "$$this"] }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                in: "$$dotProduct"
+              }
+            }
+          }
+        },
+        // Trie par similarité décroissante
+        { $sort: { similarity: -1 } },
+        // Limite aux top-K résultats
+        { $limit: topK },
+        // Projette uniquement les champs nécessaires
+        {
+          $project: {
+            film_embedding: 0,  // Exclut l'embedding pour alléger
+            __v: 0
+          }
+        }
+      ];
+
+      const relevantFilms = await UgcFilm.aggregate(pipeline);
+
+      console.log(`   ✅ ${relevantFilms.length} films trouvés par RAG`);
+      if (relevantFilms.length > 0) {
+        console.log(`   📊 Similarités: ${relevantFilms[0].similarity.toFixed(4)} (max) → ${relevantFilms[relevantFilms.length-1].similarity.toFixed(4)} (min)`);
+      }
+
+      return relevantFilms;
 
     } catch (error) {
-      console.error('❌ Erreur scraping MCP:', error);
-      return {
-        success: false,
-        error: error.message
-      };
+      console.error('❌ Erreur recherche vectorielle RAG:', error);
+      // Fallback : retourne tous les films des cinémas
+      return await UgcFilm.find({
+        cinema_id: { $in: cinemaIds.map(id => parseInt(id)) }
+      }).limit(topK).lean();
     }
   }
-  
+
   /**
-   * ÉTAPE 1.3 : Génération de la recommandation finale
+   * Construit la requête texte pour l'embedding basée sur les préférences
    */
-  async _generateRecommendation(userInput, preferences, cinemas, scrapedContent) {
-    console.log(`🧠 Génération recommandation avec LLM`);
-    console.log(`   - Contenu scrapé: ${scrapedContent.length} caractères`);
+  _buildQueryText(preferences) {
+    const parts = [];
+
+    if (preferences.genre) {
+      parts.push(`Genre: ${preferences.genre}`);
+    }
+
+    if (preferences.realisateur) {
+      parts.push(`Réalisateur: ${preferences.realisateur}`);
+    }
+
+    if (preferences.acteurs && preferences.acteurs.length > 0) {
+      parts.push(`Acteurs: ${preferences.acteurs.join(', ')}`);
+    }
+
+    if (preferences.duree_max) {
+      parts.push(`Durée maximale: ${preferences.duree_max} minutes`);
+    }
+
+    if (preferences.mots_cles && preferences.mots_cles.length > 0) {
+      parts.push(`Mots-clés: ${preferences.mots_cles.join(', ')}`);
+    }
+
+    // Si aucune préférence, requête générique
+    if (parts.length === 0) {
+      return "Film populaire de qualité avec bonne note";
+    }
+
+    return parts.join('\n');
+  }
+
+  /**
+   * ÉTAPE 1.3 : Génération de la recommandation finale (avec RAG)
+   */
+  async _generateRecommendation(userInput, preferences, cinemas) {
+    console.log(`🧠 Génération recommandation avec RAG + LLM`);
     console.log(`   - Cinémas: ${cinemas.length}`);
     console.log(`   - Préférences:`, preferences);
 
-    // Parse le JSON scrapé
-    let filmsData;
-    try {
-      filmsData = JSON.parse(scrapedContent);
-    } catch (error) {
-      console.error('❌ Erreur parsing JSON scrapé:', error);
-      return "Désolé, une erreur s'est produite lors du traitement des données cinéma.";
+    // ÉTAPE RAG : Recherche vectorielle des films pertinents
+    const cinemaIds = cinemas.map(c => c._id || c.id);
+    const relevantFilms = await this._searchRelevantFilms(preferences, cinemaIds, 10);
+
+    if (relevantFilms.length === 0) {
+      return "Désolé, aucun film ne correspond à vos critères dans les cinémas trouvés. Pourriez-vous élargir vos préférences ?";
     }
+
+    // Formater les films pour le LLM (structure légère)
+    const filmsForPrompt = relevantFilms.map(film => ({
+      title: film.title,
+      genre: film.genre,
+      duration_minutes: film.duration_minutes,
+      duration_display: film.duration_display,
+      director: film.director,
+      actors: film.actors,
+      rating: film.rating,
+      cinema_id: film.cinema_id,
+      cinema_name: film.cinema_name,
+      seances: film.seances,
+      similarity_score: film.similarity
+    }));
+
+    console.log(`   📊 ${filmsForPrompt.length} films sélectionnés par RAG`);
 
     const systemPrompt = `Tu es un assistant de recommandation de films UGC.
 
@@ -202,43 +297,43 @@ ${JSON.stringify({
   mots_cles: preferences.mots_cles || []
 }, null, 2)}
 
-DONNÉES CINÉMAS ET FILMS (JSON structuré):
-${JSON.stringify(filmsData, null, 2)}
+FILMS PERTINENTS (sélectionnés par recherche vectorielle RAG):
+${JSON.stringify(filmsForPrompt, null, 2)}
 
 INSTRUCTIONS DE MATCHING:
-1. ANALYSE les préférences utilisateur et les films disponibles
-2. FILTRE les films selon ces critères (dans l'ordre de priorité):
-   a) Genre: si spécifié, le film.genre doit contenir le genre demandé
-   b) Durée: si duree_max spécifiée, film.duration_minutes <= duree_max
-   c) Acteurs: si spécifiés, au moins un acteur doit être dans film.actors
-   d) Réalisateur: si spécifié, film.director doit correspondre
-   e) Note: privilégie les films avec rating >= 3.5
+1. CONTEXTE RAG:
+   - Les films ci-dessus ont été pré-sélectionnés par recherche vectorielle sémantique
+   - Le champ 'similarity_score' indique la pertinence (plus élevé = plus pertinent)
+   - Ces films matchent déjà sémantiquement avec les préférences utilisateur
 
-3. SÉLECTIONNE les 2-3 MEILLEURS films qui correspondent
+2. TON RÔLE:
+   a) Vérifie les contraintes strictes (durée max, séances disponibles)
+   b) Priorise les films avec similarity_score élevé ET bon rating
+   c) Sélectionne les 2-3 MEILLEURS films
 
-4. Pour chaque film recommandé, FORMATE ainsi:
+3. FORMATAGE des recommandations:
    📽️ **[Titre du film]** ([durée]) - Note: [rating]/5
    🎭 Genre: [genre]
    👤 Réalisateur: [director]
-   ⭐ Pourquoi: [explication courte du match avec les préférences]
+   ⭐ Pourquoi: [explication du match avec les préférences]
 
    📍 Où: [cinema_name]
-   🕐 Séances: [liste des 3-4 prochaines séances avec dates]
+   🕐 Séances: [liste des 3-4 prochaines séances avec dates complètes]
 
-5. Si AUCUN film ne correspond parfaitement:
-   - Propose les films les plus proches des critères
-   - Explique pourquoi ils ne correspondent pas exactement
-   - Suggère de modifier les préférences
+4. Si AUCUN film ne correspond strictement:
+   - Propose les films les plus proches (similarity_score élevé)
+   - Explique l'écart avec les critères
+   - Suggère d'élargir les préférences
 
 RÈGLES IMPORTANTES:
-- Sois précis sur les horaires (date + heure de début)
-- Ne recommande QUE des films avec des séances disponibles
-- Reste concis et direct
-- Ne propose jamais de film sans séance programmée`;
+- Utilise le similarity_score comme indicateur de pertinence
+- Sois précis sur les horaires (date + heure)
+- Ne recommande QUE des films avec séances disponibles
+- Reste concis et direct`;
 
     // Log le prompt pour debug
     console.log('📝 Taille du prompt système:', systemPrompt.length, 'caractères');
-    console.log('📝 Nombre de cinémas:', filmsData.cinemas?.length || (filmsData.cinema_id ? 1 : 0));
+    console.log('📝 Nombre de films RAG:', filmsForPrompt.length);
 
     try {
       const response = await this._callOllama([

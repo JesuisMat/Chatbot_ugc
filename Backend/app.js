@@ -11,6 +11,7 @@ import cors from 'cors';
 import indexRouter from './routes/index.js';
 import usersRouter from './routes/users.js';
 import recommendationRouter from './routes/recommandation.js';
+import adminRouter from './routes/admin.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,7 +28,8 @@ app.use(cors());
 // Routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/api', recommendationRouter); // ⭐ NOUVEAU
+app.use('/api', recommendationRouter);
+app.use('/api/admin', adminRouter); // ⭐ Routes admin RAG
 
 // Health check
 app.get('/health', (req, res) => {
