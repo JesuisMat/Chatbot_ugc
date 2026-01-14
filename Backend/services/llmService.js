@@ -192,11 +192,49 @@ Réponds UNIQUEMENT avec le JSON, sans commentaire ni markdown.`;
         { $sort: { similarity: -1 } },
         // Limite aux top-K résultats
         { $limit: topK },
+        // JOIN avec la collection cinemas pour récupérer les infos complètes
+        {
+          $lookup: {
+            from: "cinemas",
+            let: { cinema_id: "$cinema_id" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $or: [
+                      { $eq: ["$id", "$$cinema_id"] },
+                      { $eq: [{ $toInt: "$_id" }, "$$cinema_id"] }
+                    ]
+                  }
+                }
+              }
+            ],
+            as: "cinema_details"
+          }
+        },
+        // Déplie le tableau cinema_details (normalement 1 seul élément)
+        {
+          $unwind: {
+            path: "$cinema_details",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        // Ajoute les champs enrichis du cinéma
+        {
+          $addFields: {
+            cinema_full_name: { $ifNull: ["$cinema_details.Nom", "$cinema_details.nom", "$cinema_name"] },
+            cinema_address: { $ifNull: ["$cinema_details.Adresse", "$cinema_details.adresse", ""] },
+            cinema_city: { $ifNull: ["$cinema_details.Ville", "$cinema_details.ville", ""] },
+            cinema_postal_code: { $ifNull: ["$cinema_details.Code_postal", "$cinema_details.code_postal", ""] },
+            cinema_google_maps_url: { $ifNull: ["$cinema_details.url_google_maps", ""] }
+          }
+        },
         // Projette uniquement les champs nécessaires
         {
           $project: {
             film_embedding: 0,  // Exclut l'embedding pour alléger
-            __v: 0
+            __v: 0,
+            cinema_details: 0  // Exclut l'objet joint complet
           }
         }
       ];
@@ -206,6 +244,15 @@ Réponds UNIQUEMENT avec le JSON, sans commentaire ni markdown.`;
       console.log(`   ✅ ${relevantFilms.length} films trouvés par RAG`);
       if (relevantFilms.length > 0) {
         console.log(`   📊 Similarités: ${relevantFilms[0].similarity.toFixed(4)} (max) → ${relevantFilms[relevantFilms.length-1].similarity.toFixed(4)} (min)`);
+        console.log(`   🏢 DEBUG enrichissement film[0]:`, {
+          cinema_id: relevantFilms[0].cinema_id,
+          cinema_name_original: relevantFilms[0].cinema_name,
+          cinema_full_name: relevantFilms[0].cinema_full_name,
+          cinema_address: relevantFilms[0].cinema_address,
+          cinema_city: relevantFilms[0].cinema_city,
+          cinema_postal_code: relevantFilms[0].cinema_postal_code,
+          cinema_google_maps_url: relevantFilms[0].cinema_google_maps_url
+        });
       }
 
       return relevantFilms;
@@ -269,7 +316,7 @@ Réponds UNIQUEMENT avec le JSON, sans commentaire ni markdown.`;
       return "Désolé, aucun film ne correspond à vos critères dans les cinémas trouvés. Pourriez-vous élargir vos préférences ?";
     }
 
-    // Formater les films pour le LLM (structure légère)
+    // Formater les films pour le LLM (structure légère avec infos enrichies du cinéma)
     const filmsForPrompt = relevantFilms.map(film => ({
       title: film.title,
       genre: film.genre,
@@ -279,14 +326,50 @@ Réponds UNIQUEMENT avec le JSON, sans commentaire ni markdown.`;
       actors: film.actors,
       rating: film.rating,
       cinema_id: film.cinema_id,
-      cinema_name: film.cinema_name,
+      cinema_name: film.cinema_full_name,                      // UNIQUEMENT le nom complet (pas de fallback)
+      cinema_address: film.cinema_address || '',               // Adresse complète
+      cinema_city: film.cinema_city || '',                     // Ville
+      cinema_postal_code: film.cinema_postal_code || '',       // Code postal
+      cinema_google_maps_url: film.cinema_google_maps_url || '', // Lien Google Maps
       seances: film.seances,
       similarity_score: film.similarity
     }));
 
     console.log(`   📊 ${filmsForPrompt.length} films sélectionnés par RAG`);
+    if (filmsForPrompt.length > 0) {
+      console.log(`   🏢 DEBUG film mappé[0]:`, {
+        cinema_name: filmsForPrompt[0].cinema_name,
+        cinema_address: filmsForPrompt[0].cinema_address,
+        cinema_city: filmsForPrompt[0].cinema_city,
+        cinema_google_maps_url: filmsForPrompt[0].cinema_google_maps_url
+      });
+    }
+
+    // Obtenir la date et l'heure actuelles (format français)
+    const now = new Date();
+    const currentDateTime = now.toLocaleString('fr-FR', {
+      timeZone: 'Europe/Paris',
+      dateStyle: 'full',
+      timeStyle: 'short'
+    });
+    const currentDateOnly = now.toLocaleDateString('fr-FR', {
+      timeZone: 'Europe/Paris',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
 
     const systemPrompt = `Tu es un assistant de recommandation de films UGC.
+
+CONTEXTE TEMPOREL (À NE PAS MENTIONNER À L'UTILISATEUR):
+- Horodatage actuel: ${currentDateTime}
+- Date du jour: ${currentDateOnly}
+
+IMPORTANT: Utilise ces informations en interne pour :
+- Ne recommander QUE les séances futures (après ${currentDateTime})
+- Indiquer si une séance est "aujourd'hui", "demain", ou la date exacte
+- Filtrer les séances passées
+- NE JAMAIS afficher l'horodatage dans ta réponse (pas de "⏰ HORODATAGE ACTUEL" visible)
 
 PRÉFÉRENCES UTILISATEUR:
 ${JSON.stringify({
@@ -317,12 +400,25 @@ INSTRUCTIONS DE MATCHING:
    👤 Réalisateur: [director]
    ⭐ Pourquoi: [explication du match avec les préférences]
 
-   📍 Où: [cinema_name]
-   🕐 Séances: [liste des 3-4 prochaines séances avec dates complètes]
+   📍 Où: [Utilise EXACTEMENT le champ cinema_name du JSON ci-dessus] - [Voir sur Google Maps](cinema_google_maps_url)
+        Adresse: [cinema_address], [cinema_postal_code] [cinema_city]
+   🕐 Séances FUTURES uniquement: [liste des 3-4 prochaines séances après ${currentDateTime}]
+
+   IMPORTANT pour le nom du cinéma:
+   - Utilise EXACTEMENT la valeur du champ "cinema_name" fournie dans les données JSON
+   - N'invente JAMAIS de nom comme "UGC Cinéma 1" ou "UGC Cinéma 42"
+   - Si cinema_name est vide ou null, indique "Cinéma non spécifié"
+
+   IMPORTANT pour les séances:
+   - Utilise la date et l'heure actuelles (${currentDateTime}) pour filtrer
+   - N'affiche QUE les séances futures
+   - Indique "Aujourd'hui", "Demain" ou la date complète
+   - Format: "Aujourd'hui à 20h30 (VOSTF)" ou "Demain 15 janvier à 14h00 (VF)"
 
 4. Si AUCUN film ne correspond strictement:
    - Propose les films les plus proches (similarity_score élevé)
    - Explique l'écart avec les critères
+   - Ne parle pas de score caculé, mais utilise des termes comme "proche de vos préférences"
    - Suggère d'élargir les préférences
 
 RÈGLES IMPORTANTES:
