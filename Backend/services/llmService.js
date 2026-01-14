@@ -7,6 +7,9 @@ class LLMService {
   constructor() {
     this.ollamaUrl = process.env.OLLAMA_BASE_URL || 'http://localhost:11434';
     this.model = process.env.OLLAMA_MODEL || 'qwen2.5:3b';
+    this.mistralApiKey = process.env.API_KEY_MISTRAL || '';
+    this.mistralUrl = 'https://api.mistral.ai/v1/chat/completions';
+    this.mistralModel = 'mistral-small-latest'; // Modèle plus récent et performant
   }
   
   /**
@@ -77,6 +80,7 @@ Ton rôle : analyser la requête et extraire les informations suivantes au forma
   "code_postal": "string ou null (5 chiffres)",
   "genre": "string ou null (action, comédie, drame, thriller, science-fiction, animation, etc.)",
   "duree_max": "number ou null (en minutes)",
+  "titre": "string ou null",
   "acteurs": ["string"] ou [],
   "realisateur": "string ou null",
   "mots_cles": ["string"] ou []
@@ -101,7 +105,7 @@ Requête: "Un bon film de Christopher Nolan pas trop long"
 Réponds UNIQUEMENT avec le JSON, sans commentaire ni markdown.`;
 
     try {
-      const response = await this._callOllama([
+      const response = await this._callMistral([
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userInput }
       ]);
@@ -359,7 +363,9 @@ Réponds UNIQUEMENT avec le JSON, sans commentaire ni markdown.`;
       day: '2-digit'
     });
 
-    const systemPrompt = `Tu es un assistant de recommandation de films UGC.
+    const systemPrompt = `Tu es un assistant de recommandation de films pour l'enseigne de cinémas UGC en France. Tu est présent en tant que chatbot sur le site web d'UGC.
+
+OBJECTIF:
 
 CONTEXTE TEMPOREL (À NE PAS MENTIONNER À L'UTILISATEUR):
 - Horodatage actuel: ${currentDateTime}
@@ -367,7 +373,7 @@ CONTEXTE TEMPOREL (À NE PAS MENTIONNER À L'UTILISATEUR):
 
 IMPORTANT: Utilise ces informations en interne pour :
 - Ne recommander QUE les séances futures (après ${currentDateTime})
-- Indiquer si une séance est "aujourd'hui", "demain", ou la date exacte
+- Indiquer la date exacte
 - Filtrer les séances passées
 - NE JAMAIS afficher l'horodatage dans ta réponse (pas de "⏰ HORODATAGE ACTUEL" visible)
 
@@ -400,8 +406,7 @@ INSTRUCTIONS DE MATCHING:
    👤 Réalisateur: [director]
    ⭐ Pourquoi: [explication du match avec les préférences]
 
-   📍 Où: [Utilise EXACTEMENT le champ cinema_name du JSON ci-dessus] - [Voir sur Google Maps](cinema_google_maps_url)
-        Adresse: [cinema_address], [cinema_postal_code] [cinema_city]
+   📍 Où: [cinema_address], [cinema_postal_code] [cinema_city]
    🕐 Séances FUTURES uniquement: [liste des 3-4 prochaines séances après ${currentDateTime}]
 
    IMPORTANT pour le nom du cinéma:
@@ -413,7 +418,15 @@ INSTRUCTIONS DE MATCHING:
    - Utilise la date et l'heure actuelles (${currentDateTime}) pour filtrer
    - N'affiche QUE les séances futures
    - Indique "Aujourd'hui", "Demain" ou la date complète
-   - Format: "Aujourd'hui à 20h30 (VOSTF)" ou "Demain 15 janvier à 14h00 (VF)"
+   - Format: date complète + heure (ex: "le 15 septembre 2024 à 20:30")
+
+Si une contrainte spécifique de l'utilisateur (ex: un acteur précis, une date, un lieu) ne correspond à aucune donnée présente dans le contexte fourni :
+
+- Ne force pas la recommandation.
+- Informe clairement à l'utilisateur que tu ne disposes pas d'informations correspondant à ce critère spécifique.
+- Ne propose pas d'alternative sans prévenir explicitement que cela ne correspond pas au critère initial.
+
+Il vaut mieux répondre "Je ne sais pas" ou "Ce critère n'est pas dans ma base" que de donner une réponse approximative ou fausse.
 
 4. Si AUCUN film ne correspond strictement:
    - Propose les films les plus proches (similarity_score élevé)
@@ -422,7 +435,7 @@ INSTRUCTIONS DE MATCHING:
    - Suggère d'élargir les préférences
 
 RÈGLES IMPORTANTES:
-- Utilise le similarity_score comme indicateur de pertinence
+- Utilise le similarity_score comme indicateur de pertinence (sans jamais le mentionner explicitement)
 - Sois précis sur les horaires (date + heure)
 - Ne recommande QUE des films avec séances disponibles
 - Reste concis et direct`;
@@ -432,7 +445,7 @@ RÈGLES IMPORTANTES:
     console.log('📝 Nombre de films RAG:', filmsForPrompt.length);
 
     try {
-      const response = await this._callOllama([
+      const response = await this._callMistral([
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userInput }
       ], {
@@ -468,7 +481,7 @@ RÈGLES IMPORTANTES:
           }
         },
         {
-          timeout: 120000 // 2 minutes max
+          timeout: 240000 // 2 minutes max
         }
       );
       
@@ -485,6 +498,43 @@ RÈGLES IMPORTANTES:
       throw error;
     }
   }
+
+  async _callMistral(messages, options = {}) {
+    try {
+      const response = await axios.post(
+        this.mistralUrl,  // URL déjà complète : https://api.mistral.ai/v1/chat/completions
+        {
+          model: this.mistralModel,
+          messages,
+          stream: false,
+          temperature: options.temperature || 0.7,
+          max_tokens: options.max_tokens || 2048
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${this.mistralApiKey}`,
+            'Content-Type': 'application/json'
+          },
+          timeout: 240000 // 4 minutes max
+        }
+      );
+
+      // Format de réponse Mistral : response.data.choices[0].message.content
+      return response.data.choices[0].message.content;
+      
+    } catch (error) {
+      if (error.response) {
+        console.error('❌ Erreur Mistral:', error.response.data);
+      } else if (error.code === 'ECONNREFUSED') {
+        console.error('❌ Impossible de se connecter à Mistral. Est-il bien démarré ?');
+      } else {
+        console.error('❌ Erreur réseau Mistral:', error.message);
+      }
+      throw error;
+    }
+  }
 }
+
+
 
 export default new LLMService();
