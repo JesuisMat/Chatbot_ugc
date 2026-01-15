@@ -81,6 +81,7 @@ export const createConversation = async () => {
 export const sendChatMessage = async (payload) => {
   try {
     const response = await apiClient.post('/recommendation', payload);
+    console.log('📨 Message envoyé au chatbot:', payload);
     return response.data;
   } catch (error) {
     console.error('❌ Erreur envoi message:', error);

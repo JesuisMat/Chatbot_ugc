@@ -88,7 +88,7 @@ const sendMessage = async (textInput) => {
     // 3. Appeler l'API
     const payload = {
       message: textToSend,
-      session_id: sessionId.value,
+      session_id: sessionId.value || undefined,
       code_postal: postalCode.value || undefined
     }
 

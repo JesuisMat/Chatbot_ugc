@@ -3,7 +3,7 @@
     <img 
   src="/315082.HR_.webp" 
   class="w-full h-full object-cover opacity-60"
-  @error="(e) => e.target.src = 'https://placehold.co/1200x500/001C4F/white?text=AVATAR+DE+FEU+ET+DE+CENDRES'"
+  error="(e) => e.target.src = 'https://placehold.co/1200x500/001C4F/white?text=AVATAR+DE+FEU+ET+DE+CENDRES'"
 />
     
     <div class="absolute inset-0 flex flex-col justify-center max-w-7xl mx-auto px-4">
