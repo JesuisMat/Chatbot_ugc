@@ -1,3 +1,6 @@
+"""
+UGC Cinema Scraper - Version adaptée pour MCP
+"""
 import requests
 import re
 import json
@@ -56,6 +59,12 @@ class UGCScraper:
                 
                 time.sleep(0.3)  # Polite scraping
             
+            # ⭐ Filtre: ne garde que les films avec au moins une séance programmée
+            films_with_showings = [
+                film for film in film_index.values()
+                if film["showings"] and len(film["showings"]) > 0
+            ]
+
             return {
                 "success": True,
                 "cinema": {
@@ -63,8 +72,10 @@ class UGCScraper:
                     "name": cinema_name or f"UGC Cinéma {cinema_id}"
                 },
                 "available_dates": available_dates[:7],
-                "films": list(film_index.values()),
-                "film_count": len(film_index)
+                "films": films_with_showings,
+                "film_count": len(films_with_showings),
+                "total_films_scraped": len(film_index),
+                "films_filtered": len(film_index) - len(films_with_showings)
             }
             
         except Exception as e:
